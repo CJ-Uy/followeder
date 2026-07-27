@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+/*
+ * Palette derived from the measured luminance histogram of the source
+ * recordings (spec §3.1): the algorithm separates a ~16 background, a ~148
+ * display-name gray, and a ~240 username white. The interface uses the same
+ * three tones for the same three roles.
+ */
+:root {
+	--bg: #0b0b0c;
+	--surface: #141417;
+	--surface-2: #1b1b1f;
+	--line: #26262b;
+	--line-bright: #34343b;
+	--dim: #9a9aa1;
+	/* 4.6:1 on --bg. Was #5c5c63 (2.8:1) — below the floor for any real text. */
+	--dimmer: #7c7c85;
+	--fg: #f4f4f6;
+	--signal: #ffa23a;
+	--signal-dim: #7a4d14;
+}
+
+@theme inline {
+	--color-bg: var(--bg);
+	--color-surface: var(--surface);
+	--color-surface-2: var(--surface-2);
+	--color-line: var(--line);
+	--color-line-bright: var(--line-bright);
+	--color-dim: var(--dim);
+	--color-dimmer: var(--dimmer);
+	--color-fg: var(--fg);
+	--color-signal: var(--signal);
+	--color-signal-dim: var(--signal-dim);
+	--font-sans: var(--font-archivo);
+	--font-mono: var(--font-plex-mono);
+}
+
+html {
+	color-scheme: dark;
+	background: var(--bg);
+}
+
+body {
+	background: var(--bg);
+	color: var(--fg);
+	font-family: var(--font-archivo), system-ui, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Uncertainty is hatched, not colored — it reads as "unresolved region",
+   which is what it is, and needs no extra hue. */
+.hatch {
+	background-image: repeating-linear-gradient(
+		45deg,
+		transparent 0 6px,
+		color-mix(in srgb, var(--dim) 9%, transparent) 6px 7px
+	);
+}
+
+/* The scan timeline's read-ticks. */
+.ticks {
+	background-image: repeating-linear-gradient(
+		to right,
+		var(--line-bright) 0 1px,
+		transparent 1px 4px
+	);
+}
+
+::selection {
+	background: var(--signal);
+	color: #17120a;
+}
+
+:focus-visible {
+	outline: 2px solid var(--signal);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
