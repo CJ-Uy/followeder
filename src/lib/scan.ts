@@ -488,7 +488,12 @@ function classifySection(
 function waitForMetadata(video: HTMLVideoElement, signal?: AbortSignal): Promise<void> {
 	if (video.readyState >= HTMLMediaElement.HAVE_METADATA) return Promise.resolve();
 	return new Promise((resolve, reject) => {
+		const timeout = window.setTimeout(() => {
+			cleanup();
+			reject(new Error("The video metadata did not load. On iPhone, make sure the recording is downloaded locally and try again."));
+		}, 15000);
 		const cleanup = () => {
+			window.clearTimeout(timeout);
 			video.removeEventListener("loadedmetadata", loaded);
 			video.removeEventListener("error", failed);
 			signal?.removeEventListener("abort", aborted);
@@ -542,6 +547,7 @@ export async function scanVideo(
 	video.preload = "auto";
 	const objectUrl = URL.createObjectURL(file);
 	video.src = objectUrl;
+	video.load();
 
 	let worker: TesseractWorker | null = null;
 	let workerPromise: Promise<TesseractWorker> | null = null;
